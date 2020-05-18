@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 part 'todo.g.dart';
-
+// providing class for hive
 @HiveType(typeId:0)
 class Note{
   @HiveField(0)

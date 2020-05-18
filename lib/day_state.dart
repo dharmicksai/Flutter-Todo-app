@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'todo.dart';
-
+//these state are outputed for changing ui
 abstract class DayState{
   final todobox=Hive.box('todo');
   DateTime day=DateTime.now();

@@ -1,5 +1,5 @@
 import 'todo.dart';
-
+//events  that are taken as input to bloc
 abstract class DayEvent {}
 
 class ChangeDayEvent extends DayEvent{

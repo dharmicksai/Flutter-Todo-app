@@ -7,6 +7,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  flutter_local_notifications: ^1.4.3
   dartx: ^0.2.0
   table_calendar: ^2.2.3
   path_provider: ^1.6.7
@@ -29,6 +30,20 @@ dependency_overrides:
   dartx: ^0.3.0
 
 flutter:
+  fonts:
+    - family: Bangers
+      fonts:
+        - asset: fonts/Bangers-Regular.ttf
+    - family: IndieFlower
+      fonts:
+        - asset: fonts/IndieFlower-Regular.ttf
+    - family: Satisfy
+      fonts:
+        - asset: fonts/Satisfy-Regular.ttf
+    - family: Lobster
+      fonts:
+        - asset: fonts/Lobster-Regular.ttf
+
 
   uses-material-design: true
   assets:
