@@ -259,7 +259,7 @@ class _ListTodoState extends State<ListTodo> {
               //checking if there are no todos
               if(todos.length==0)
                 {
-                  return Text('press the '+' button to add todo');
+                  return Center(child: Text('Press the +'+' button to add todo',style: TextStyle(fontFamily: 'Bangers',fontSize: 20.0),));
                 }
               return ListView.builder(
                 //builder that provides list of all task
@@ -665,20 +665,8 @@ class _Page2State extends State<Page2> {
                       return Column(
                         //displaying time and date
                         children: <Widget>[
-                          Text("${todo.date.day}-${todo.date.month}-${todo.date.year},",style: TextStyle(
-                              fontFamily: 'Bangers',  //font family for style
-                              fontSize: 30.0,
-                              color:Colors.black
-
-                          ),),
-                          Text(
-                            "${hour} : $minutes' " + ti,
-                            style: TextStyle(
-                                fontFamily: 'Bangers',  //font family for style
-                                fontSize: 30.0,
-                              color: Colors.black
-
-                            ),
+                          SizedBox(
+                            height: 20.0,
                           ),
                           //making the widget blend with background
                           Opacity(
