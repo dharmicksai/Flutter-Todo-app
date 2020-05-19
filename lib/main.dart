@@ -11,8 +11,8 @@ import 'package:todo/day_event.dart';
 import 'package:todo/todo.dart';
 import 'day_block.dart';
 import 'day_state.dart';
-import 'loader.dart';
-import 'widget/Alertwidget.dart';
+import 'widget/loader.dart';
+import 'widget/OnCompleteWiggle.dart';
 
 void main() async {
 
