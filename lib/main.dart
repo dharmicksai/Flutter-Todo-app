@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -86,12 +87,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   //declaring variables
+  final notifications = FlutterLocalNotificationsPlugin();
   CalendarController _controller;
   TextEditingController _eventController;
   final _dayblock = DayBloc();
   @override
   void initState() {
     //initialising variables
+
     _controller = CalendarController();
     _eventController = TextEditingController();
     super.initState();
@@ -322,9 +325,9 @@ class _ListTodoState extends State<ListTodo> {
                               color: (todo.completed)
                                   ? Colors.lightGreenAccent
                                   : Colors.orangeAccent),
+                          //this wiggles the task when marked completed
                           child: OnCompletionWiggle(
-
-                             ExpansionTile(
+                            ExpansionTile(
                               //providing key
                               key: Key(todo.date.toString()),
                               title: Row(

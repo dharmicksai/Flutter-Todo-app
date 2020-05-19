@@ -6,7 +6,7 @@ class OnCompletionWiggle extends StatelessWidget {
   final Widget child;
   bool completed;
   OnCompletionWiggle(this.child,this.completed){
-   if(completed)
+   if(completed==true)
      this._endValue=2*pi;
    else
      this._endValue=0;
