@@ -17,11 +17,15 @@ class _loaderState extends State<loader> with SingleTickerProviderStateMixin{ //
   double radius=0.0; //radius druing execution
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+  @override
   void initState(){ //initialisation of animations
     super.initState();
-    Timer(Duration(seconds: 1), (){  //setting time of animation to 5 seconds
-    } );
-    controller=AnimationController(vsync: this,duration: Duration(seconds: 1)); //initialising controller
+
+    controller=AnimationController(vsync: this,duration: Duration(seconds: 0,milliseconds:900 )); //initialising controller
 
     animation_rotation = Tween<double>(
       begin: 0.0, // start of value of rotation

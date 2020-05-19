@@ -61,8 +61,8 @@ class DayBloc extends Bloc<DayEvent,DayState>{
       )async* {
     if(event is ChangeDayEvent){
       yield LoadingState();
-      //providing artificial buffer time
-      Future nal = await Future.delayed(Duration(seconds: 2));
+      //providing artificial loading time
+      Future nal = await Future.delayed(Duration(seconds: 1));
       yield ShowTodo()..day=event.day;
     }else if(event is VerifyAddEvent){
       //adding task to hive db

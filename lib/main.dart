@@ -12,6 +12,7 @@ import 'package:todo/todo.dart';
 import 'day_block.dart';
 import 'day_state.dart';
 import 'loader.dart';
+import 'widget/Alertwidget.dart';
 
 void main() async {
 
@@ -83,6 +84,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   //declaring variables
   CalendarController _controller;
   TextEditingController _eventController;
@@ -156,35 +158,43 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 Container(
                   //callender
-                  child: TableCalendar(
-                    //setting initial day to present day
-                    initialSelectedDay: DateTime.now(),
-                    //on selecting day sending event to change state
-                    onDaySelected: (date, events) {
-                      _dayblock.Changeday(date);
-                      setState(() {});
-                    },
+                  child:
+                  BlocBuilder(
+                    bloc: _dayblock,
+                    builder: (context, DayState state) {
+                      return TableCalendar(
+                        //setting initial day to present day
+                        initialSelectedDay: DateTime.now(),
+                        //on selecting day sending event to change state
+                        onDaySelected: (date, events) {
+                          _dayblock.Changeday(date);
+                          setState(() {});
+                        },
+                        events: _dayblock.currentState.events,
 
-                    calendarController: _controller,
-                    //colors for date text
-                    calendarStyle: CalendarStyle(
-                      todayColor: Colors.blueGrey,
-                      selectedColor: Colors.blue,
-                    ),
-                    headerStyle: HeaderStyle(
-                      //style for header of callender
-                      centerHeaderTitle: true,
-                      formatButtonDecoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(20.0)),
-                      formatButtonTextStyle: TextStyle(
-                        color: Colors.white,
-                      ),
-                      //shows current state of callender
-                      formatButtonShowsNext: false,
-                    ),
-                    //seting starting day to monday
-                    startingDayOfWeek: StartingDayOfWeek.monday,
+
+                        calendarController: _controller,
+                        //colors for date text
+                        calendarStyle: CalendarStyle(
+                          todayColor: Colors.blueGrey,
+                          selectedColor: Colors.blue,
+                        ),
+                        headerStyle: HeaderStyle(
+                          //style for header of callender
+                          centerHeaderTitle: true,
+                          formatButtonDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(20.0)),
+                          formatButtonTextStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          //shows current state of callender
+                          formatButtonShowsNext: false,
+                        ),
+                        //seting starting day to monday
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                      );
+                    }
                   ),
                 ),
                 BlocProvider(
@@ -211,9 +221,7 @@ class _HomePageState extends State<HomePage> {
                         return UpdateForm();
                       }
                       if (state is LoadingState) {
-                        return Center(
-                          child: LinearProgressIndicator(),
-                        );
+                        return Container(child: Center(child: loader()));
                       }
                     },
                   ),
@@ -257,7 +265,7 @@ class _ListTodoState extends State<ListTodo> {
             valueListenable: state.todobox.listenable(),
             builder: (context, Box todos, _) {
               //checking if there are no todos
-              if(todos.length==0)
+              if(state.events[state.day]==null)
                 {
                   return Center(child: Text('Press the +'+' button to add todo',style: TextStyle(fontFamily: 'Bangers',fontSize: 20.0),));
                 }
@@ -314,71 +322,75 @@ class _ListTodoState extends State<ListTodo> {
                               color: (todo.completed)
                                   ? Colors.lightGreenAccent
                                   : Colors.orangeAccent),
-                          child: ExpansionTile(
-                            //providing key
-                            key: Key(todo.date.toString()),
-                            title: Row(
+                          child: OnCompletionWiggle(
+
+                             ExpansionTile(
+                              //providing key
+                              key: Key(todo.date.toString()),
+                              title: Row(
+                                children: <Widget>[
+                                  Text(todo.title.toString(),style: TextStyle(
+                                      fontFamily: 'Bangers',  //font family for style
+                                      fontSize: 30.0
+                                  ),),
+                                  SizedBox(
+                                    width: 20.0,
+                                  ),
+                                  (todo.completed==true)?
+                                     Icon(Icons.assignment_turned_in):SizedBox()
+                                ],
+                              ),
                               children: <Widget>[
-                                Text(todo.title.toString(),style: TextStyle(
-                                    fontFamily: 'Bangers',  //font family for style
-                                    fontSize: 30.0
-                                ),),
-                                SizedBox(
-                                  width: 20.0,
-                                ),
-                                (todo.completed==true)?
-                                   Icon(Icons.assignment_turned_in):SizedBox()
+                                //on tap on widget children r shown
+                                Text("description : "+todo.description.toString(),style:TextStyle(
+                                  fontFamily: 'Satisfy',
+                                  fontSize: 20.0,
+                                  fontWeight:FontWeight.w700,
+
+                                )),
+                                //buttons in a row
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      tooltip: "Update Todo",
+                                      onPressed: () {
+                                        //sending event of update to bloc
+                                        BlocProvider.of<DayBloc>(context)
+                                            .Update(index);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    IconButton(
+                                      //changing icon based on state of to_do
+                                      icon: (todo.completed)
+                                          ? Icon(Icons.update)
+                                          : Icon(Icons.done),
+                                      tooltip: (todo.completed)
+                                          ? "Mark as in-complete"
+                                          : "Mark as completed",
+                                      onPressed: () {
+                                        //on presed Mark as complete event is sent to bloc
+                                        BlocProvider.of<DayBloc>(context)
+                                            .MarkComp(index);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    IconButton(
+                                        icon: Icon(Icons.delete),
+                                        tooltip: "Delete todo",
+                                        onPressed: () {
+                                          //on presed delete action is sent to bloc
+                                          BlocProvider.of<DayBloc>(context)
+                                              .Delete(index);
+                                          setState(() {});
+                                        })
+                                  ],
+                                )
                               ],
                             ),
-                            children: <Widget>[
-                              //on tap on widget children r shown
-                              Text("description : "+todo.description.toString(),style:TextStyle(
-                                fontFamily: 'Satisfy',
-                                fontSize: 20.0,
-                                fontWeight:FontWeight.w700,
-
-                              )),
-                              //buttons in a row
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    tooltip: "Update Todo",
-                                    onPressed: () {
-                                      //sending event of update to bloc
-                                      BlocProvider.of<DayBloc>(context)
-                                          .Update(index);
-                                      setState(() {});
-                                    },
-                                  ),
-                                  IconButton(
-                                    //changing icon based on state of to_do
-                                    icon: (todo.completed)
-                                        ? Icon(Icons.update)
-                                        : Icon(Icons.done),
-                                    tooltip: (todo.completed)
-                                        ? "Mark as in-complete"
-                                        : "Mark as completed",
-                                    onPressed: () {
-                                      //on presed Mark as complete event is sent to bloc
-                                      BlocProvider.of<DayBloc>(context)
-                                          .MarkComp(index);
-                                      setState(() {});
-                                    },
-                                  ),
-                                  IconButton(
-                                      icon: Icon(Icons.delete),
-                                      tooltip: "Delete todo",
-                                      onPressed: () {
-                                        //on presed delete action is sent to bloc
-                                        BlocProvider.of<DayBloc>(context)
-                                            .Delete(index);
-                                        setState(() {});
-                                      })
-                                ],
-                              )
-                            ],
+                            todo.completed,
                           ),
                         )
                       ],
