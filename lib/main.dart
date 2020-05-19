@@ -265,7 +265,7 @@ class _ListTodoState extends State<ListTodo> {
             valueListenable: state.todobox.listenable(),
             builder: (context, Box todos, _) {
               //checking if there are no todos
-              if(state.events[state.day]==null)
+              if(state.todobox.length==0)
                 {
                   return Center(child: Text('Press the +'+' button to add todo',style: TextStyle(fontFamily: 'Bangers',fontSize: 20.0),));
                 }

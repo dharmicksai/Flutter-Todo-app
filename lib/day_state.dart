@@ -7,7 +7,7 @@ abstract class DayState{
   int index;
   Map<DateTime,List<dynamic>> events = {
     for(int i=0;i < Hive.box('todo').length ;i++)
-      Hive.box('todo').getAt(i).date : [Hive.box('todo').getAt(i).title]
+      DateTime(Hive.box('todo').getAt(i).date.year,Hive.box('todo').getAt(i).date.month,Hive.box('todo').getAt(i).date.day) : [Hive.box('todo').getAt(i).title]
   };
 
 
