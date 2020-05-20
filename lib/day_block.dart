@@ -9,34 +9,6 @@ import 'LocalNotificationHelper.dart';
 import 'todo.dart';
 
 
-
-Future onSelectNotification(String payload) async{
-
-}
-
-Future initialise_notifications(FlutterLocalNotificationsPlugin notifications,int index)
-async{
-  int f=0;
-  for(int i= 0;i<Hive.box('todo').length;i++)
-    {
-      Note note=Hive.box('todo').getAt(index);
-      if(i==index)
-        {
-          f=1;
-          continue;
-        }
-      if(f==1)
-        {
-          if(DateTime.now().difference(note.date).isNegative&&Hive.box('todo').getAt(index).completed==false)
-          await showOngoingNotification(notifications,title:note.title,body:note.description,date:note.date.subtract(Duration(hours: 1)),id:index-1);
-        } else
-        {
-          if(DateTime.now().difference(note.date).isNegative&&Hive.box('todo').getAt(index).completed==false)
-          await showOngoingNotification(notifications,title:note.title,body:note.description,date:note.date.subtract(Duration(hours: 1)),id:index);
-        }
-    }
-}
-
 class DayBloc extends Bloc<DayEvent,DayState>{
   final notifications = FlutterLocalNotificationsPlugin();
   @override
@@ -44,12 +16,14 @@ class DayBloc extends Bloc<DayEvent,DayState>{
   DayState get initialState => InitialState();
   //converrting functions to events
   DayBloc()  {
+    //initialising settings for android and ios
     final settingAndroid = AndroidInitializationSettings('app_icon');
     final settingIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: (id,title,body,payload){
           onSelectNotification(payload);
         }
     );
+    //initialising Flutter plugin
     notifications.initialize(
         InitializationSettings(settingAndroid, settingIOS),
         onSelectNotification:onSelectNotification
@@ -69,6 +43,8 @@ class DayBloc extends Bloc<DayEvent,DayState>{
     final Date=DateTime(date.year,date.month,date.day,time.hour,time.minute);
     final note= Note(title,description,Date,false);
     print(Date);
+    //adding notification if to_do is set for future
+    //notification is dispatched one hour before deadline
     if(DateTime.now().difference(Date).isNegative)
       await showOngoingNotification(notifications,title:title,body:description,date: Date.subtract(Duration(hours: 1)),id:Hive.box('todo').length);
     dispatch(VerifyAddEvent(note));
@@ -82,6 +58,7 @@ class DayBloc extends Bloc<DayEvent,DayState>{
     final note= Note(title,description,Date,Hive.box('todo').getAt(index).completed);
     print(Date);
     dispatch((PutAt(index, note)));
+    //changing notification if task is set for future and is not complete
     if(DateTime.now().difference(Date).isNegative&&Hive.box('todo').getAt(index).completed==false)
     await showOngoingNotification(notifications,title:title,body:description,date: Date.subtract(Duration(hours: 1)),id:index);
   }
@@ -97,15 +74,17 @@ class DayBloc extends Bloc<DayEvent,DayState>{
   }
 
   void Delete(int index)async{
+    dispatch(DeleteEvent(index));
+    //cancelling all notifications and reinitialising them with new id's
     notifications.cancelAll();
     await initialise_notifications(notifications, index);
-    dispatch(DeleteEvent(index));
+
   }
 
 
   void MarkComp(int index)async{
     dispatch(MarkCompEvent(index));
-
+  //cancels notification when completed
     notifications.cancel(index);
 
 
