@@ -1,7 +1,7 @@
 # todo
  
 
-A new Flutter application which keeps storage of what u want to do in future.
+A new Flutter application which keeps storage of what u want to do in future .
 
 Installation Method Using Android Studio
  * This App runs on latest flutter sdk if not updated please update
@@ -27,4 +27,5 @@ Ways to Use
 * to expand todo press on title
 * to update  todo press on edit button
 * to delete press on delete icon 
-* to mark as completed or un completed press on done button
+* to mark as completed or un completed press on done button.
+* u will get a notification one hour before deadline.
